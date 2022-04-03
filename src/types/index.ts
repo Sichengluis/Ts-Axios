@@ -25,6 +25,7 @@ interface AxiosRequestConfig {
   data?: any
   headers?: any
   responseType?: XMLHttpRequestResponseType
+  timeout?: number // 请求超时时间
 }
 interface AxiosResponse {
   data: any
@@ -35,4 +36,11 @@ interface AxiosResponse {
   request: any //XMLHttpRequest
 }
 interface AxiosPromise extends Promise<AxiosResponse> {}
-export { Method, AxiosRequestConfig, AxiosResponse, AxiosPromise }
+interface AxiosError extends Error {
+  hasError: boolean
+  config: AxiosRequestConfig
+  code?: string | null
+  request?: any // xhr
+  response?: AxiosResponse
+}
+export { Method, AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosError }
