@@ -3,7 +3,8 @@
  * @Date: 2022-03-30 16:36:33
  * @Description: 发送xhr请求
  */
-
+import { transformResponseData } from './utils/data'
+import { parseHeaders } from './utils/headers'
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise(resolve => {
@@ -25,8 +26,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     xhr.send(data)
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
-        const responseHeaders = xhr.getAllResponseHeaders()
-        const responseData = xhr.response
+        const responseHeaders = parseHeaders(xhr.getAllResponseHeaders())
+        const responseData = transformResponseData(xhr.response)
         const promiseResolvedResponse: AxiosResponse = {
           data: responseData,
           status: xhr.status,

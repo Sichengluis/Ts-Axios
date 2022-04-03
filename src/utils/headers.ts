@@ -47,4 +47,28 @@ function setHeaders(headers: any, data: any): void {
   return headers
 }
 
-export { setHeaders }
+/**
+ * @description: 将字符串类型的响应头转成对象形式
+ * @param {string} headers
+ * @return {*}
+ */
+function parseHeaders(headers: string): any {
+  const parsedHeaders: any = Object.create(null)
+  if (!headers) {
+    return parsedHeaders
+  }
+  headers.split('\r\n').forEach(line => {
+    let [key, value] = line.split(':')
+    if (!key) {
+      return
+    }
+    key = key.trim().toLocaleLowerCase()
+    if (value) {
+      value.trim()
+    }
+    parsedHeaders[key] = value
+  })
+  return parsedHeaders
+}
+
+export { setHeaders, parseHeaders }
