@@ -4,7 +4,7 @@
  * @Description: 处理url路径
  */
 import { dateOrNot } from './date'
-import { objectOrNot } from './object'
+import plainObjectOrNot from './object'
 /**
  * @description: 用于将一个对象通过 URL 进行传输
  * encodeURIComponent方法将特殊字符比如空格进行编码，
@@ -52,7 +52,7 @@ export default function getUrlWithParams(url: string, params?: any): string {
     valArr.forEach(val => {
       if (dateOrNot(val)) {
         val = val.toISOString()
-      } else if (objectOrNot(val)) {
+      } else if (plainObjectOrNot(val)) {
         val = JSON.stringify(val)
       }
       // 只有参数值为数组时会push多次
