@@ -18,6 +18,7 @@ type Method =
   | 'PUT'
   | 'patch'
   | 'PATCH'
+
 interface AxiosRequestConfig {
   url?: string
   method?: Method
@@ -27,15 +28,19 @@ interface AxiosRequestConfig {
   responseType?: XMLHttpRequestResponseType
   timeout?: number // 请求超时时间
 }
-interface AxiosResponse {
-  data: any
+
+interface AxiosResponse<T = any> {
+  data: T // 响应数据支持泛型
   status: number
   statusText: string
   headers: any
   config: AxiosRequestConfig
   request: any //XMLHttpRequest
 }
-interface AxiosPromise extends Promise<AxiosResponse> {}
+
+// AxiosResponse<T>为resolve(x)中x的数据类型
+interface AxiosPromise<T = any> extends Promise<AxiosResponse<T>> {}
+
 interface AxiosError extends Error {
   hasError: boolean
   config: AxiosRequestConfig
@@ -43,16 +48,18 @@ interface AxiosError extends Error {
   request?: any // xhr
   response?: AxiosResponse
 }
+
 interface Axios {
-  request(config: AxiosRequestConfig): AxiosPromise
-  get(url: string, config?: AxiosRequestConfig): AxiosPromise
-  delete(url: string, config?: AxiosRequestConfig): AxiosPromise
-  head(url: string, config?: AxiosRequestConfig): AxiosPromise
-  options(url: string, config?: AxiosRequestConfig): AxiosPromise
-  post(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
-  put(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
-  patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
+  get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  delete<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  head<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  options<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+  patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
 }
+
 /**
  * @description: 混合对象类型
  * @param {*}
@@ -60,7 +67,8 @@ interface Axios {
  */
 interface AxiosInstance extends Axios {
   // 这两个函数其实都指向Axios类的request函数
-  (config: AxiosRequestConfig): AxiosPromise
-  (url: string, config?: AxiosRequestConfig): AxiosPromise
+  <T = any>(config: AxiosRequestConfig): AxiosPromise<T>
+  <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
+
 export { Axios, AxiosInstance, Method, AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosError }
