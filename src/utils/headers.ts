@@ -1,10 +1,10 @@
 /*
  * @Author: Lisc
  * @Date: 2022-03-31 10:39:00
- * @Description: 处理请求头
+ * @Description: 处理请求头和响应头
  */
 
-import plainObjectOrNot from './object'
+import { plainObjectOrNot } from './helpers'
 
 /**
  * @description: 将用户传入的请求头中的key转换成标准格式

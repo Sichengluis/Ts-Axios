@@ -1,7 +1,7 @@
 /*
  * @Author: Lisc
  * @Date: 2022-03-30 16:05:38
- * @Description: 封装请求对象
+ * @Description:
  */
 type Method =
   | 'get'
@@ -19,7 +19,7 @@ type Method =
   | 'patch'
   | 'PATCH'
 interface AxiosRequestConfig {
-  url: string
+  url?: string
   method?: Method
   params?: any
   data?: any
@@ -43,4 +43,24 @@ interface AxiosError extends Error {
   request?: any // xhr
   response?: AxiosResponse
 }
-export { Method, AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosError }
+interface Axios {
+  request(config: AxiosRequestConfig): AxiosPromise
+  get(url: string, config?: AxiosRequestConfig): AxiosPromise
+  delete(url: string, config?: AxiosRequestConfig): AxiosPromise
+  head(url: string, config?: AxiosRequestConfig): AxiosPromise
+  options(url: string, config?: AxiosRequestConfig): AxiosPromise
+  post(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  put(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+  patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise
+}
+/**
+ * @description: 混合对象类型
+ * @param {*}
+ * @return {*}
+ */
+interface AxiosInstance extends Axios {
+  // 这两个函数其实都指向Axios类的request函数
+  (config: AxiosRequestConfig): AxiosPromise
+  (url: string, config?: AxiosRequestConfig): AxiosPromise
+}
+export { Axios, AxiosInstance, Method, AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosError }

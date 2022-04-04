@@ -1,7 +1,7 @@
 /*
  * @Author: Lisc
  * @Date: 2022-04-03 15:00:32
- * @Description:
+ * @Description: 封装Error类
  */
 import { AxiosRequestConfig, AxiosResponse } from '../types'
 class AxiosError extends Error {

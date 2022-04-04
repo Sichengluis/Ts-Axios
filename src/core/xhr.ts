@@ -3,10 +3,10 @@
  * @Date: 2022-03-30 16:36:33
  * @Description: 发送xhr请求
  */
-import { createError } from './utils/error'
-import { transformResponseData } from './utils/data'
-import { parseHeaders } from './utils/headers'
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
+import { createError } from '../utils/error'
+import { transformResponseData } from '../utils/data'
+import { parseHeaders } from '../utils/headers'
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
     const { url, headers, responseType, timeout, method = 'get', data = null } = config
@@ -15,7 +15,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       xhr.responseType = responseType
     }
 
-    xhr.open(method.toUpperCase(), url, true)
+    xhr.open(method.toUpperCase(), url!, true)
 
     if (headers) {
       Object.keys(headers).forEach(headerName => {

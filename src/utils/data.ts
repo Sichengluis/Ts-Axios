@@ -1,10 +1,9 @@
 /*
  * @Author: Lisc
  * @Date: 2022-03-31 10:12:20
- * @Description: 处理请求配置对象中的data
+ * @Description: 处理请求体和响应体
  */
-import plainObjectOrNot from './object'
-
+import { plainObjectOrNot } from './helpers'
 /**
  * @description: xhr不支持传递对象作为data数据，对象需要转成JSon字符串
  * @param {any} data

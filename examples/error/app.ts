@@ -1,5 +1,4 @@
 import axios, { AxiosError } from '../../src/index'
-
 // //404
 // axios({
 //   method: 'get',
