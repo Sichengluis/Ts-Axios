@@ -3,8 +3,8 @@
  * @Date: 2022-04-03 16:23:38
  * @Description:
  */
-import { AxiosRequestConfig, AxiosPromise } from '../types'
-import { transformRequestData } from '../utils/data'
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
+import { transformRequestData, transformResponseData } from '../utils/data'
 import getUrlWithParams from '../utils/url'
 import { setHeaders } from '../utils/headers'
 import xhr from './xhr'
@@ -16,7 +16,9 @@ import xhr from './xhr'
 export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
   processRequestConfig(config)
   // 返回带有xhr请求结果的Promise对象
-  return xhr(config)
+  return xhr(config).then(res => {
+    return processResponseData(res)
+  })
 }
 function processRequestConfig(config: AxiosRequestConfig): void {
   config.url = processUrl(config)
@@ -48,4 +50,13 @@ function processRequestData(config: AxiosRequestConfig): any {
 function processHeaders(config: AxiosRequestConfig): any {
   const { headers = {}, data } = config
   return setHeaders(headers, data)
+}
+/**
+ * @description: 转换响应数据格式(如果响应数据为Json字符串,将其转换成Json对象)
+ * @param {AxiosRequestConfig} config
+ * @return {*}
+ */
+function processResponseData(resp: AxiosResponse): any {
+  resp.data = transformResponseData(resp.data)
+  return resp
 }

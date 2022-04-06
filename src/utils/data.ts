@@ -23,7 +23,7 @@ function transformRequestData(data: any): any {
  * @return {*}
  */
 function transformResponseData(data: any): any {
-  if (typeof data === 'string') {
+  if (data && typeof data === 'string') {
     try {
       data = JSON.parse(data)
     } catch {

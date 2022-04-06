@@ -1,7 +1,7 @@
 /*
  * @Author: Lisc
  * @Date: 2022-03-30 16:05:38
- * @Description:
+ * @Description: 公用和暴露给使用者的接口
  */
 type Method =
   | 'get'
@@ -50,6 +50,10 @@ interface AxiosError extends Error {
 }
 
 interface Axios {
+  interceptors: {
+    request: AxiosInterceptorManager<AxiosRequestConfig>
+    response: AxiosInterceptorManager<AxiosResponse>
+  }
   request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
   get<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
   delete<T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
@@ -71,4 +75,28 @@ interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
-export { Axios, AxiosInstance, Method, AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosError }
+interface AxiosInterceptorManager<T> {
+  use(resolve: ResolvedFn<T>, reject?: RejectedFn): number
+  eject(id: number): void
+}
+
+interface ResolvedFn<T> {
+  (val: T): T | Promise<T>
+}
+
+interface RejectedFn {
+  (error: any): any
+}
+
+export {
+  Axios,
+  AxiosInstance,
+  Method,
+  AxiosRequestConfig,
+  AxiosResponse,
+  AxiosPromise,
+  AxiosError,
+  AxiosInterceptorManager,
+  ResolvedFn,
+  RejectedFn
+}

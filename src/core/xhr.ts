@@ -69,7 +69,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
      * @return {*}
      */
     function handleResponseStatus(resp: AxiosResponse): void {
-      if ((resp.status > 200 && resp.status < 300) || resp.status === 304) {
+      if ((resp.status >= 200 && resp.status < 300) || resp.status === 304) {
         resolve(resp)
       } else {
         reject(

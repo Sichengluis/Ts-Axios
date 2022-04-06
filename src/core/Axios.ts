@@ -6,17 +6,44 @@
  * 这样做是为了达到外界调用request方法时只能传入config对象的效果
  */
 
-import { AxiosPromise, AxiosRequestConfig, Method } from '../types'
+import {
+  AxiosPromise,
+  AxiosRequestConfig,
+  AxiosResponse,
+  Method,
+  RejectedFn,
+  ResolvedFn
+} from '../types'
 import dispatchRequest from './dispatchRequest'
+import InterceptorManager from './interceptorManager'
+
+interface Interceptors {
+  request: InterceptorManager<AxiosRequestConfig>
+  response: InterceptorManager<AxiosResponse>
+}
+
+interface PromiseChainItem<T> {
+  resolve: ResolvedFn<T> | ((config: AxiosRequestConfig) => AxiosPromise)
+  reject?: RejectedFn
+}
 
 export default class Axios {
+  interceptors: Interceptors
+  constructor() {
+    this.interceptors = {
+      request: new InterceptorManager<AxiosRequestConfig>(),
+      response: new InterceptorManager<AxiosResponse>()
+    }
+  }
+
   /**
-   * @description: 直接以函数形式(两种方式)调用axios 和 调用axios的request别名时,底层的实现方法
+   * @description: 直接以函数形式(两种方式)调用axios 和 调用axios的别名(request,get,post等)时,底层的实现方法
    * @param {any} urlOrConfig
    * @param {AxiosRequestConfig} config
    * @return {*}
    */
-  request(urlOrConfig: any, config?: AxiosRequestConfig): AxiosPromise {
+  request(urlOrConfig: any, config?: any): AxiosPromise {
+    // 支持直接传入配置对象和传入url和配置对象两种调用方式
     if (typeof urlOrConfig === 'string') {
       if (!config) {
         config = {}
@@ -25,7 +52,37 @@ export default class Axios {
     } else {
       config = urlOrConfig
     }
-    return dispatchRequest(config!)
+
+    //拦截器链式调用
+    const chain: PromiseChainItem<any>[] = [
+      // 初始化Promise链,最开始只有发送请求的resolve
+      {
+        resolve: dispatchRequest
+      }
+    ]
+
+    // 遍历拦截器并添加到Promise链
+    this.interceptors.request.forEach(interceptor => {
+      // 请求拦截器后添加的先执行
+      chain.unshift(interceptor)
+    })
+    this.interceptors.response.forEach(interceptor => {
+      // 响应拦截器先添加的先执行
+      chain.push(interceptor)
+    })
+
+    //初始化一个resolve了config对象的promise对象
+    //这里resolve了config对象,第一个then函数的resolve回调才能拿到config
+    //并对config进行加工
+    let promise = Promise.resolve(config)
+
+    //链式调用
+    while (chain.length) {
+      const { resolve, reject } = chain.shift()!
+      promise = promise.then(resolve, reject)
+    }
+    // 最终返回给用户的promise
+    return promise
   }
 
   get(url: string, config?: AxiosRequestConfig): AxiosPromise {
