@@ -19,21 +19,59 @@ type Method =
   | 'patch'
   | 'PATCH'
 
+type AxiosRequestHeaders = Record<string, string | number | boolean>
+
+type AxiosResponseHeaders = Record<string, string> & {
+  'set-cookie'?: string[]
+}
+
+interface HeadersDefaults {
+  common?: AxiosRequestHeaders
+  delete?: AxiosRequestHeaders
+  get?: AxiosRequestHeaders
+  head?: AxiosRequestHeaders
+  post?: AxiosRequestHeaders
+  put?: AxiosRequestHeaders
+  patch?: AxiosRequestHeaders
+  options?: AxiosRequestHeaders
+  purge?: AxiosRequestHeaders
+  link?: AxiosRequestHeaders
+  unlink?: AxiosRequestHeaders
+  // 为了跳过Ts静态类型检查添加的属性
+  [propName: string]: any
+}
+
+interface TransformFn {
+  (data: any, headers?: any): any
+}
+
 interface AxiosRequestConfig {
   url?: string
   method?: Method
   params?: any
   data?: any
-  headers?: any
+  headers?: AxiosRequestHeaders
   responseType?: XMLHttpRequestResponseType
   timeout?: number // 请求超时时间
+  transformRequest?: TransformFn | TransformFn[]
+  transformResponse?: TransformFn | TransformFn[]
+  // 为了跳过Ts静态类型检查添加的属性
+  [propName: string]: any
+}
+
+/**
+ * @description: Axios默认请求配置对象
+ * 除了headers类型外,其他类型与请求配置对象相同
+ */
+interface AxiosDefaultRequestConfig extends Omit<AxiosRequestConfig, 'headers'> {
+  headers: HeadersDefaults
 }
 
 interface AxiosResponse<T = any> {
   data: T // 响应数据支持泛型
   status: number
   statusText: string
-  headers: any
+  headers: AxiosResponseHeaders
   config: AxiosRequestConfig
   request: any //XMLHttpRequest
 }
@@ -50,6 +88,7 @@ interface AxiosError extends Error {
 }
 
 interface Axios {
+  defaults: AxiosDefaultRequestConfig
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosResponse>
@@ -75,6 +114,10 @@ interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
+interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
+}
+
 interface AxiosInterceptorManager<T> {
   use(resolve: ResolvedFn<T>, reject?: RejectedFn): number
   eject(id: number): void
@@ -98,5 +141,11 @@ export {
   AxiosError,
   AxiosInterceptorManager,
   ResolvedFn,
-  RejectedFn
+  RejectedFn,
+  TransformFn,
+  AxiosDefaultRequestConfig,
+  HeadersDefaults,
+  AxiosRequestHeaders,
+  AxiosResponseHeaders,
+  AxiosStatic
 }

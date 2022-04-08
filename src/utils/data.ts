@@ -9,7 +9,7 @@ import { plainObjectOrNot } from './helpers'
  * @param {any} data
  * @return {*}
  */
-function transformRequestData(data: any): any {
+function transformRequest(data: any): any {
   if (plainObjectOrNot(data)) {
     return JSON.stringify(data)
   }
@@ -22,7 +22,7 @@ function transformRequestData(data: any): any {
  * @param {any} data
  * @return {*}
  */
-function transformResponseData(data: any): any {
+function transformResponse(data: any): any {
   if (data && typeof data === 'string') {
     try {
       data = JSON.parse(data)
@@ -33,4 +33,4 @@ function transformResponseData(data: any): any {
   return data
 }
 
-export { transformRequestData, transformResponseData }
+export { transformRequest, transformResponse }

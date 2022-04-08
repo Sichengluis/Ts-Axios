@@ -22,7 +22,6 @@ function plainObjectOrNot(o: any): o is object {
  */
 function extend<T, U>(to: T, from: U): T & U {
   for (const key in from) {
-    // debugger
     ;(to as T & U)[key] = from[key] as any
   }
   return to as T & U
@@ -37,4 +36,30 @@ function dateOrNot(d: any): d is Date {
   return Tostring.call(d) === '[object Date]'
 }
 
-export { plainObjectOrNot, extend, dateOrNot }
+/**
+ * @description: 深拷贝
+ * @param {array} objs
+ * @return {*}
+ */
+function deepCopy(...objs: any[]): any {
+  const result = Object.create(null)
+  objs.forEach(obj => {
+    if (obj) {
+      Object.keys(obj).forEach(key => {
+        const val = obj[key]
+        if (plainObjectOrNot(val)) {
+          if (plainObjectOrNot(result[key])) {
+            result[key] = deepCopy(result[key], val)
+          } else {
+            result[key] = deepCopy(val)
+          }
+        } else {
+          result[key] = val
+        }
+      })
+    }
+  })
+  return result
+}
+
+export { plainObjectOrNot, extend, dateOrNot, deepCopy }

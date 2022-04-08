@@ -4,7 +4,7 @@
  * @Description: 发送xhr请求
  */
 import { createError } from '../utils/error'
-import { transformResponseData } from '../utils/data'
+import { transformResponse } from '../utils/data'
 import { parseHeaders } from '../utils/headers'
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
@@ -23,7 +23,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
           delete headers[headerName]
           return
         }
-        xhr.setRequestHeader(headerName, headers[headerName])
+        xhr.setRequestHeader(headerName, headers[headerName] as string)
       })
     }
     if (timeout) {
@@ -41,7 +41,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       }
       // 成功获取响应
       const responseHeaders = parseHeaders(xhr.getAllResponseHeaders())
-      const responseData = transformResponseData(xhr.response)
+      const responseData = xhr.response
       const response: AxiosResponse = {
         data: responseData,
         status: xhr.status,

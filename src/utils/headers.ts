@@ -4,7 +4,8 @@
  * @Description: 处理请求头和响应头
  */
 
-import { plainObjectOrNot } from './helpers'
+import { Method } from '../types'
+import { deepCopy, plainObjectOrNot } from './helpers'
 
 /**
  * @description: 将用户传入的请求头中的key转换成标准格式
@@ -71,4 +72,26 @@ function parseHeaders(headers: string): any {
   return parsedHeaders
 }
 
-export { setHeaders, parseHeaders }
+function flattenHeaders(headers: any, method: Method): any {
+  if (!headers) {
+    return headers
+  }
+  // 顺序不可颠倒,后边的优先级高
+  const methodMergedHeaders = deepCopy(headers.common, headers[method])
+  const keysToDelete: string[] = [
+    'common',
+    'get',
+    'delete',
+    'head',
+    'options',
+    'post',
+    'put',
+    'patch'
+  ]
+  keysToDelete.forEach(key => {
+    delete headers[key]
+  })
+  return deepCopy(methodMergedHeaders, headers)
+}
+
+export { setHeaders, parseHeaders, flattenHeaders }
