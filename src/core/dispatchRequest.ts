@@ -14,6 +14,8 @@ import transform from './transform'
  * @return {*}
  */
 export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
+  // cancelToken已经被使用过，再去携带相同的cancelToken发送请求没有意义
+  throwIfCanceled(config)
   processRequestConfig(config)
   // 返回带有xhr请求结果的Promise对象
   return xhr(config).then(resp => {
@@ -54,4 +56,10 @@ function transformRequestData(config: AxiosRequestConfig): any {
 function transformResponseData(resp: AxiosResponse): any {
   resp.data = transform(resp.data, resp.headers, resp.config.transformResponse)
   return resp
+}
+
+function throwIfCanceled(config: AxiosRequestConfig): void {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested()
+  }
 }

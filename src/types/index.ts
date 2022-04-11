@@ -55,6 +55,8 @@ interface AxiosRequestConfig {
   timeout?: number // 请求超时时间
   transformRequest?: TransformFn | TransformFn[]
   transformResponse?: TransformFn | TransformFn[]
+  cancelToken?: CancelToken
+  withCredentials?: boolean
   // 为了跳过Ts静态类型检查添加的属性
   [propName: string]: any
 }
@@ -114,8 +116,15 @@ interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
+/**
+ * @description: Axios 类类型接口
+ * 描述Axios的静态属性和方法
+ */
 interface AxiosStatic extends AxiosInstance {
   create(config?: AxiosRequestConfig): AxiosInstance
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (val: any) => boolean
 }
 
 interface AxiosInterceptorManager<T> {
@@ -129,6 +138,51 @@ interface ResolvedFn<T> {
 
 interface RejectedFn {
   (error: any): any
+}
+
+/**
+ * @description: 实例类型接口
+ */
+interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel
+  throwIfRequested(): void
+}
+
+interface CancelTokenSource {
+  token: CancelToken
+  cancel: CancelFn
+}
+
+/**
+ * @description: 类类型接口
+ */
+interface CancelTokenStatic {
+  new (executor: CancelExecutor): CancelToken
+  source(): CancelTokenSource
+}
+
+/**
+ * @description: 取消方法cancel的类型
+ */
+interface CancelFn {
+  (message?: string): void
+}
+
+/**
+ * @description: 一个函数，为CancelToken构造函数的参数
+ * 此函数的参数也为函数，即取消函数
+ */
+interface CancelExecutor {
+  (cancel: CancelFn): void
+}
+
+interface Cancel {
+  message?: string
+}
+
+interface CancelStatic {
+  new (message?: string): Cancel
 }
 
 export {
@@ -147,5 +201,12 @@ export {
   HeadersDefaults,
   AxiosRequestHeaders,
   AxiosResponseHeaders,
-  AxiosStatic
+  AxiosStatic,
+  CancelToken,
+  CancelFn,
+  CancelExecutor,
+  CancelTokenStatic,
+  CancelTokenSource,
+  Cancel,
+  CancelStatic
 }

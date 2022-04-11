@@ -8,6 +8,8 @@ import Axios from './core/Axios'
 import { extend } from './utils/helpers'
 import defaults from './defaults'
 import mergeConfig from './core/mergeConfig'
+import Cancel, { isCancel } from './cancel/Cancel'
+import CancelToken from './cancel/CancelToken'
 /**
  * @description: 创建Axios混合对象
  * @param {*}
@@ -25,5 +27,8 @@ const axios = createInstance(defaults)
 axios.create = function(config?: AxiosRequestConfig) {
   return createInstance(mergeConfig(defaults, config))
 }
+axios.CancelToken = CancelToken
+axios.Cancel = Cancel
+axios.isCancel = isCancel
 
 export default axios
