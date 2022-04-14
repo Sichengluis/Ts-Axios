@@ -3,8 +3,14 @@
  * @Date: 2022-03-30 20:59:08
  * @Description: 处理请求url路径
  */
-import { plainObjectOrNot } from './helpers'
-import { dateOrNot } from './helpers'
+import { isPlainObject } from './helpers'
+import { isDate } from './helpers'
+
+interface URLOrigin {
+  protocol: string
+  host: string
+}
+
 /**
  * @description: 用于将一个对象通过 URL 进行传输
  * encodeURIComponent方法将特殊字符比如空格进行编码，
@@ -29,7 +35,7 @@ function encode(preVal: string): string {
  * @param {any} params
  * @return {*}
  */
-export default function getUrlWithParams(url: string, params?: any): string {
+function getUrlWithParams(url: string, params?: any): string {
   if (!params) {
     return url
   }
@@ -50,9 +56,9 @@ export default function getUrlWithParams(url: string, params?: any): string {
       valArr = [val]
     }
     valArr.forEach(val => {
-      if (dateOrNot(val)) {
+      if (isDate(val)) {
         val = val.toISOString()
-      } else if (plainObjectOrNot(val)) {
+      } else if (isPlainObject(val)) {
         val = JSON.stringify(val)
       }
       // 只有参数值为数组时会push多次
@@ -71,3 +77,24 @@ export default function getUrlWithParams(url: string, params?: any): string {
   }
   return url
 }
+
+function isURLSameOrigin(url: string): boolean {
+  const parsedOrigin = resolveURL(url)
+  return (
+    parsedOrigin.protocol === window.location.protocol && parsedOrigin.host === window.location.host
+  )
+}
+
+const urlParsingNode = document.createElement('a')
+// const currentOrigin = resolveURL(window.location.href)
+
+function resolveURL(url: string): URLOrigin {
+  urlParsingNode.setAttribute('href', url)
+  const { protocol, host } = urlParsingNode
+  return {
+    protocol,
+    host
+  }
+}
+
+export { getUrlWithParams, isURLSameOrigin }

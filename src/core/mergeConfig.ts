@@ -5,7 +5,7 @@
  */
 
 import { AxiosDefaultRequestConfig, AxiosRequestConfig } from '../types'
-import { deepCopy, plainObjectOrNot } from '../utils/helpers'
+import { deepCopy, isPlainObject } from '../utils/helpers'
 
 const strategiesMap = Object.create(null)
 
@@ -38,7 +38,7 @@ function fromUserStrategy(defaultVal: any, userVal: any): any {
  * @return {*}
  */
 function deepMergeStrategy(defaultVal: any, userVal: any): any {
-  if (plainObjectOrNot(userVal)) {
+  if (isPlainObject(userVal)) {
     // 用户设置的值为对象,和默认配置对象合并
     return deepCopy(defaultVal, userVal)
   } else if (typeof userVal !== 'undefined') {
@@ -46,7 +46,7 @@ function deepMergeStrategy(defaultVal: any, userVal: any): any {
     return userVal
   }
   // 用户没有设置值,使用默认配置
-  else if (plainObjectOrNot(defaultVal)) {
+  else if (isPlainObject(defaultVal)) {
     return deepCopy(defaultVal)
   } else {
     return defaultVal

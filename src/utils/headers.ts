@@ -5,7 +5,7 @@
  */
 
 import { Method } from '../types'
-import { deepCopy, plainObjectOrNot } from './helpers'
+import { deepCopy, isPlainObject } from './helpers'
 
 /**
  * @description: 将用户传入的请求头中的key转换成标准格式
@@ -40,7 +40,7 @@ function setHeaders(headers: any, data: any): void {
   const contentTypeStr = 'Content-Type'
   const jsonContentType = 'application/json'
   normalizeHeaderName(headers, contentTypeStr)
-  if (plainObjectOrNot(data)) {
+  if (isPlainObject(data)) {
     if (headers && !headers[contentTypeStr]) {
       headers[contentTypeStr] = jsonContentType
     }

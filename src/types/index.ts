@@ -57,6 +57,11 @@ interface AxiosRequestConfig {
   transformResponse?: TransformFn | TransformFn[]
   cancelToken?: CancelToken
   withCredentials?: boolean
+  xsrfCookieName?: string
+  xsrfHeaderName?: string
+  onDownloadProgress?: (e: ProgressEvent) => void
+  onUploadProgress?: (e: ProgressEvent) => void
+
   // 为了跳过Ts静态类型检查添加的属性
   [propName: string]: any
 }

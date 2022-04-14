@@ -10,8 +10,21 @@ const Tostring = Object.prototype.toString
  * @param {any} o
  * @return {*}
  */
-function plainObjectOrNot(o: any): o is object {
+function isPlainObject(o: any): o is object {
   return Tostring.call(o) === '[object Object]'
+}
+
+/**
+ * @description: 判断一个类型是否为日期类型
+ * @param {any} d
+ * @return {*}
+ */
+function isDate(d: any): d is Date {
+  return Tostring.call(d) === '[object Date]'
+}
+
+function isFormData(val: any): val is FormData {
+  return typeof val !== 'undefined' && val instanceof FormData
 }
 
 /**
@@ -28,15 +41,6 @@ function extend<T, U>(to: T, from: U): T & U {
 }
 
 /**
- * @description: 判断一个类型是否为日期类型
- * @param {any} d
- * @return {*}
- */
-function dateOrNot(d: any): d is Date {
-  return Tostring.call(d) === '[object Date]'
-}
-
-/**
  * @description: 深拷贝
  * @param {array} objs
  * @return {*}
@@ -47,8 +51,8 @@ function deepCopy(...objs: any[]): any {
     if (obj) {
       Object.keys(obj).forEach(key => {
         const val = obj[key]
-        if (plainObjectOrNot(val)) {
-          if (plainObjectOrNot(result[key])) {
+        if (isPlainObject(val)) {
+          if (isPlainObject(result[key])) {
             result[key] = deepCopy(result[key], val)
           } else {
             result[key] = deepCopy(val)
@@ -62,4 +66,4 @@ function deepCopy(...objs: any[]): any {
   return result
 }
 
-export { plainObjectOrNot, extend, dateOrNot, deepCopy }
+export { isPlainObject, isDate, isFormData, extend, deepCopy }

@@ -4,7 +4,7 @@
  * @Description:
  */
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
-import getUrlWithParams from '../utils/url'
+import { getUrlWithParams } from '../utils/url'
 import { flattenHeaders } from '../utils/headers'
 import xhr from './xhr'
 import transform from './transform'

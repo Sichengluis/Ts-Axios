@@ -5,11 +5,15 @@
  */
 const express = require('express')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const multipart = require('connect-multiparty')
 const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 const WebpackConfig = require('./webpack.config')
+const path = require('path')
 
+require('./server2')
 const app = express()
 const compiler = webpack(WebpackConfig) //返回一个 Compiler 实例，启动构建时传入
     // 通过 webpack-dev-middleware打包
@@ -37,11 +41,24 @@ app.use(
 // 为了支持模块热替换，源文件进行修改后自动重新打包
 app.use(webpackHotMiddleware(compiler))
 
-app.use(express.static(__dirname))
-
+app.use(
+    express.static(__dirname, {
+        setHeaders(res) {
+            res.cookie('XSRF-TOKEN-D', '1234abc')
+        }
+    })
+)
 app.use(bodyParser.json())
     // app.use(bodyParser.text())
 app.use(bodyParser.urlencoded({ extended: true }))
+
+app.use(cookieParser())
+
+app.use(
+    multipart({
+        uploadDir: path.resolve(__dirname, 'upload-file')
+    })
+)
 
 const router = express.Router()
 
