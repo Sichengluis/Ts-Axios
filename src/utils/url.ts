@@ -5,6 +5,7 @@
  */
 import { isPlainObject } from './helpers'
 import { isDate } from './helpers'
+import { isURLSearchParams } from './helpers'
 
 interface URLOrigin {
   protocol: string
@@ -35,45 +36,56 @@ function encode(preVal: string): string {
  * @param {any} params
  * @return {*}
  */
-function getUrlWithParams(url: string, params?: any): string {
+function getUrlWithParams(
+  url: string,
+  params?: any,
+  paramsSerializer?: (params: any) => string
+): string {
   if (!params) {
     return url
   }
-  const parafragments: string[] = []
-  // params实际上是一个对象
-  Object.keys(params).forEach(key => {
-    const val = params[key]
-    // 参数值传了一个空值
-    if (!val) {
-      return
-    }
-    // 将每个参数值转成数组方便进行统一处理
-    let valArr: string[] = []
-    if (Array.isArray(val)) {
-      valArr = val
-      key += '[]'
-    } else {
-      valArr = [val]
-    }
-    valArr.forEach(val => {
-      if (isDate(val)) {
-        val = val.toISOString()
-      } else if (isPlainObject(val)) {
-        val = JSON.stringify(val)
+  let serializedParams
+  if (paramsSerializer) {
+    serializedParams = paramsSerializer(params)
+  } else if (isURLSearchParams(params)) {
+    serializedParams = params.toString()
+  } else {
+    const parafragments: string[] = []
+    // params实际上是一个对象
+    Object.keys(params).forEach(key => {
+      const val = params[key]
+      // 参数值传了一个空值
+      if (!val) {
+        return
       }
-      // 只有参数值为数组时会push多次
-      parafragments.push(`${encode(key)}=${encode(val)}`)
+      // 将每个参数值转成数组方便进行统一处理
+      let valArr: string[] = []
+      if (Array.isArray(val)) {
+        valArr = val
+        key += '[]'
+      } else {
+        valArr = [val]
+      }
+      valArr.forEach(val => {
+        if (isDate(val)) {
+          val = val.toISOString()
+        } else if (isPlainObject(val)) {
+          val = JSON.stringify(val)
+        }
+        // 只有参数值为数组时会push多次
+        parafragments.push(`${encode(key)}=${encode(val)}`)
+      })
     })
-  })
-  let queryStr: string = parafragments.join('&')
+    serializedParams = parafragments.join('&')
+  }
   // 去除url的锚点
   let index: number = url.indexOf('#')
   if (index !== -1) {
     url = url.slice(0, index)
   }
   // 将url和查询字符串拼接
-  if (queryStr.length) {
-    url = url + (url.indexOf('?') === -1 ? '?' : '&') + queryStr
+  if (serializedParams.length) {
+    url = url + (url.indexOf('?') === -1 ? '?' : '&') + serializedParams
   }
   return url
 }
@@ -85,8 +97,16 @@ function isURLSameOrigin(url: string): boolean {
   )
 }
 
+function isAbsoluteURL(url: string): boolean {
+  return /(^[a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
+}
+
+function combineURL(baseURL: string, relativeURL: string): string {
+  // 自动删除baseURL后边和relativeURL前边的一个或多个/
+  return relativeURL ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '') : baseURL
+}
+
 const urlParsingNode = document.createElement('a')
-// const currentOrigin = resolveURL(window.location.href)
 
 function resolveURL(url: string): URLOrigin {
   urlParsingNode.setAttribute('href', url)
@@ -97,4 +117,4 @@ function resolveURL(url: string): URLOrigin {
   }
 }
 
-export { getUrlWithParams, isURLSameOrigin }
+export { getUrlWithParams, isURLSameOrigin, isAbsoluteURL, combineURL }

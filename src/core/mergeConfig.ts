@@ -58,7 +58,7 @@ fromUserStrategyKeys.forEach(key => {
   strategiesMap[key] = fromUserStrategy
 })
 
-const deepMergeStrategyKeys = ['headers']
+const deepMergeStrategyKeys = ['headers', 'auth']
 deepMergeStrategyKeys.forEach(key => {
   strategiesMap[key] = deepMergeStrategy
 })

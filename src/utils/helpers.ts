@@ -27,6 +27,10 @@ function isFormData(val: any): val is FormData {
   return typeof val !== 'undefined' && val instanceof FormData
 }
 
+function isURLSearchParams(val: any): val is URLSearchParams {
+  return typeof val !== 'undefined' && val instanceof URLSearchParams
+}
+
 /**
  * @description: 将from对象的所有成员复制到to对象
  * @param {T} to
@@ -66,4 +70,4 @@ function deepCopy(...objs: any[]): any {
   return result
 }
 
-export { isPlainObject, isDate, isFormData, extend, deepCopy }
+export { isPlainObject, isDate, isFormData, extend, deepCopy, isURLSearchParams }

@@ -21,6 +21,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       xsrfHeaderName,
       onDownloadProgress,
       onUploadProgress,
+      auth,
+      validateStatus,
       method = 'get',
       headers = {},
       data = null
@@ -55,6 +57,12 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
           headers[xsrfHeaderName] = xsrfToken
         }
       }
+
+      if (auth) {
+        headers['Authorization'] = `Basic ${btoa(`${auth.username}:${auth.password}`)}`
+      }
+
+      // 给xhr设置请求头
       Object.keys(headers).forEach(headerName => {
         if (headerName.toLowerCase() === 'content-type' && data === null) {
           delete headers[headerName]
@@ -153,7 +161,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
      * @return {*}
      */
     function handleResponseStatus(resp: AxiosResponse): void {
-      if ((resp.status >= 200 && resp.status < 300) || resp.status === 304) {
+      if (!validateStatus || validateStatus(resp.status)) {
         resolve(resp)
       } else {
         reject(

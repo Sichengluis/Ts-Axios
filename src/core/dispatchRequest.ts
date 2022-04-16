@@ -4,7 +4,7 @@
  * @Description:
  */
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
-import { getUrlWithParams } from '../utils/url'
+import { getUrlWithParams, isAbsoluteURL, combineURL } from '../utils/url'
 import { flattenHeaders } from '../utils/headers'
 import xhr from './xhr'
 import transform from './transform'
@@ -33,8 +33,11 @@ function processRequestConfig(config: AxiosRequestConfig): void {
  * @return {*}
  */
 function processUrl(config: AxiosRequestConfig): string {
-  const { url, params } = config
-  return getUrlWithParams(url!, params)
+  let { url, params, paramsSerializer, baseURL } = config
+  if (baseURL && !isAbsoluteURL(url!)) {
+    url = combineURL(baseURL, url!)
+  }
+  return getUrlWithParams(url!, params, paramsSerializer)
 }
 
 /**

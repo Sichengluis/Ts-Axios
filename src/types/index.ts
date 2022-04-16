@@ -61,7 +61,10 @@ interface AxiosRequestConfig {
   xsrfHeaderName?: string
   onDownloadProgress?: (e: ProgressEvent) => void
   onUploadProgress?: (e: ProgressEvent) => void
-
+  auth?: AxiosBasicCredentials
+  validateStatus?: (status: number) => boolean
+  paramsSerializer?: (params: any) => string
+  baseURL?: string
   // 为了跳过Ts静态类型检查添加的属性
   [propName: string]: any
 }
@@ -190,6 +193,11 @@ interface CancelStatic {
   new (message?: string): Cancel
 }
 
+interface AxiosBasicCredentials {
+  username: string
+  password: string
+}
+
 export {
   Axios,
   AxiosInstance,
@@ -213,5 +221,6 @@ export {
   CancelTokenStatic,
   CancelTokenSource,
   Cancel,
-  CancelStatic
+  CancelStatic,
+  AxiosBasicCredentials
 }
