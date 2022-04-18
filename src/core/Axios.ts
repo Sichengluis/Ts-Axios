@@ -13,9 +13,9 @@ import {
   AxiosResponse,
   Method,
   RejectedFn,
-  ResolvedFn
+  ResolvedFn,
 } from '../types'
-import dispatchRequest from './dispatchRequest'
+import dispatchRequest, { transformUrl } from './dispatchRequest'
 import InterceptorManager from './interceptorManager'
 import mergeConfig from './mergeConfig'
 
@@ -36,7 +36,7 @@ export default class Axios {
     this.defaults = initConfig
     this.interceptors = {
       request: new InterceptorManager<AxiosRequestConfig>(),
-      response: new InterceptorManager<AxiosResponse>()
+      response: new InterceptorManager<AxiosResponse>(),
     }
   }
 
@@ -63,16 +63,16 @@ export default class Axios {
     const chain: PromiseChainItem<any>[] = [
       // 初始化Promise链,最开始只有发送请求的resolve
       {
-        resolve: dispatchRequest
-      }
+        resolve: dispatchRequest,
+      },
     ]
 
     // 遍历拦截器并添加到Promise链
-    this.interceptors.request.forEach(interceptor => {
+    this.interceptors.request.forEach((interceptor) => {
       // 请求拦截器后添加的先执行
       chain.unshift(interceptor)
     })
-    this.interceptors.response.forEach(interceptor => {
+    this.interceptors.response.forEach((interceptor) => {
       // 响应拦截器先添加的先执行
       chain.push(interceptor)
     })
@@ -113,6 +113,10 @@ export default class Axios {
   patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise {
     return this._requestWithData('patch', url, data, config)
   }
+  getUri(config?: AxiosRequestConfig): string {
+    config = mergeConfig(this.defaults, config)
+    return transformUrl(config)
+  }
 
   /**
    * @description: 支持get、delete、head和options方法
@@ -125,7 +129,7 @@ export default class Axios {
     return this.request(
       Object.assign(config || {}, {
         method,
-        url
+        url,
       })
     )
   }
@@ -144,7 +148,7 @@ export default class Axios {
       Object.assign(config || {}, {
         method,
         url,
-        data
+        data,
       })
     )
   }

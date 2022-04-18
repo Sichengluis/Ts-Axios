@@ -111,6 +111,7 @@ interface Axios {
   post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
   put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
   patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+  getUri(config?: AxiosRequestConfig): string
 }
 
 /**
@@ -124,6 +125,10 @@ interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
+interface AxiosClassStatic {
+  new (config: AxiosDefaultRequestConfig): Axios
+}
+
 /**
  * @description: Axios 类类型接口
  * 描述Axios的静态属性和方法
@@ -133,6 +138,9 @@ interface AxiosStatic extends AxiosInstance {
   CancelToken: CancelTokenStatic
   Cancel: CancelStatic
   isCancel: (val: any) => boolean
+  all<T>(promise: Array<T | Promise<T>>): Promise<T[]>
+  spread<T, R>(callback: (...args: T[]) => R): (arr: T[]) => R
+  Axios: AxiosClassStatic
 }
 
 interface AxiosInterceptorManager<T> {
@@ -222,5 +230,5 @@ export {
   CancelTokenSource,
   Cancel,
   CancelStatic,
-  AxiosBasicCredentials
+  AxiosBasicCredentials,
 }

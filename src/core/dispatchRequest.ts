@@ -18,21 +18,21 @@ export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromis
   throwIfCanceled(config)
   processRequestConfig(config)
   // 返回带有xhr请求结果的Promise对象
-  return xhr(config).then(resp => {
+  return xhr(config).then((resp) => {
     return transformResponseData(resp)
   })
 }
 function processRequestConfig(config: AxiosRequestConfig): void {
-  config.url = processUrl(config)
+  config.url = transformUrl(config)
   config.data = transformRequestData(config)
   config.headers = flattenHeaders(config.headers, config.method!)
 }
 /**
- * @description: 将params中的参数拼接到url中
+ * @description: 得到完整的请求url
  * @param {AxiosRequestConfig} config
  * @return {*}
  */
-function processUrl(config: AxiosRequestConfig): string {
+function transformUrl(config: AxiosRequestConfig): string {
   let { url, params, paramsSerializer, baseURL } = config
   if (baseURL && !isAbsoluteURL(url!)) {
     url = combineURL(baseURL, url!)
@@ -66,3 +66,4 @@ function throwIfCanceled(config: AxiosRequestConfig): void {
     config.cancelToken.throwIfRequested()
   }
 }
+export { transformUrl }

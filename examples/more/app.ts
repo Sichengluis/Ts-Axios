@@ -192,33 +192,36 @@ import NProgress from 'nprogress'
 
 // instance.get('https://picsum.photos/id/2/200/300')
 
-// function getA() {
-//   return axios.get('/more/A')
-// }
+// 测试axios.all和axios.spread
 
-// function getB() {
-//   return axios.get('/more/B')
-// }
+function getA() {
+  return axios.get('/more/A')
+}
 
-// axios.all([getA(), getB()])
-//   .then(axios.spread(function(resA, resB) {
-//     console.log(resA.data)
-//     console.log(resB.data)
-//   }))
+function getB() {
+  return axios.get('/more/B')
+}
 
-// axios.all([getA(), getB()])
-//   .then(([resA, resB]) => {
-//     console.log(resA.data)
-//     console.log(resB.data)
-//   })
+axios.all([getA(), getB()]).then(
+  axios.spread(function(resA, resB) {
+    console.log(resA.data)
+    console.log(resB.data)
+  })
+)
 
-// const fakeConfig = {
-//   baseURL: 'https://www.baidu.com/',
-//   url: '/user/12345',
-//   params: {
-//     idClient: 1,
-//     idTest: 2,
-//     testString: 'thisIsATest'
-//   }
-// }
-// console.log(axios.getUri(fakeConfig))
+axios.all([getA(), getB()]).then(([resA, resB]) => {
+  console.log(resA.data)
+  console.log(resB.data)
+})
+
+// 测试axios.getUri
+const fakeConfig = {
+  baseURL: 'https://www.baidu.com/',
+  url: '/user/12345',
+  params: {
+    idClient: 1,
+    idTest: 2,
+    testString: 'thisIsATest'
+  }
+}
+console.log(axios.getUri(fakeConfig))
