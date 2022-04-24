@@ -21,7 +21,7 @@ type Method =
 
 type AxiosRequestHeaders = Record<string, string | number | boolean>
 
-type AxiosResponseHeaders = Record<string, string> & {
+type AxiosResponseHeaders = Record<string, string | boolean> & {
   'set-cookie'?: string[]
 }
 
@@ -90,7 +90,7 @@ interface AxiosResponse<T = any> {
 interface AxiosPromise<T = any> extends Promise<AxiosResponse<T>> {}
 
 interface AxiosError extends Error {
-  hasError: boolean
+  isAxiosError: boolean
   config: AxiosRequestConfig
   code?: string | null
   request?: any // xhr

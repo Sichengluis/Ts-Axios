@@ -52,7 +52,7 @@ function getUrlWithParams(
   } else {
     const parafragments: string[] = []
     // params实际上是一个对象
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
       const val = params[key]
       // 参数值传了一个空值
       if (!val) {
@@ -66,7 +66,7 @@ function getUrlWithParams(
       } else {
         valArr = [val]
       }
-      valArr.forEach(val => {
+      valArr.forEach((val) => {
         if (isDate(val)) {
           val = val.toISOString()
         } else if (isPlainObject(val)) {
@@ -93,12 +93,13 @@ function getUrlWithParams(
 function isURLSameOrigin(url: string): boolean {
   const parsedOrigin = resolveURL(url)
   return (
+    // host为主机和端口，hostname只有主机
     parsedOrigin.protocol === window.location.protocol && parsedOrigin.host === window.location.host
   )
 }
 
 function isAbsoluteURL(url: string): boolean {
-  return /(^[a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
 }
 
 function combineURL(baseURL: string, relativeURL: string): string {
@@ -113,7 +114,7 @@ function resolveURL(url: string): URLOrigin {
   const { protocol, host } = urlParsingNode
   return {
     protocol,
-    host
+    host,
   }
 }
 

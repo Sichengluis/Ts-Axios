@@ -16,33 +16,35 @@ const defaults: AxiosDefaultRequestConfig = {
   xsrfHeaderName: 'X-XSRF-TOKEN',
   headers: {
     common: {
-      Accept: 'application/json,text/plain,*/*'
-    }
+      Accept: 'application/json,text/plain,*/*',
+    },
   },
   transformRequest: [
-    function(data: any, headers: AxiosRequestHeaders): any {
+    function (data: any, headers: AxiosRequestHeaders): any {
+      // 设置请求头
       setHeaders(headers, data)
+      // 转换为Json字符串
       return transformRequest(data)
-    }
+    },
   ],
   transformResponse: [
-    function(data: any): any {
+    function (data: any): any {
       return transformResponse(data)
-    }
+    },
   ],
   validateStatus(status: number): boolean {
     return status >= 200 && status < 300 //|| status === 304
-  }
+  },
 }
 
 const methodsWithData = ['post', 'put', 'patch']
 const methodsWithoutData = ['get', 'delete', 'head', 'options']
-methodsWithData.forEach(method => {
+methodsWithData.forEach((method) => {
   defaults.headers[method] = {
-    'Content-Type': 'application/x-www-form-urlencoded'
+    'Content-Type': 'application/x-www-form-urlencoded',
   }
 })
-methodsWithoutData.forEach(method => {
+methodsWithoutData.forEach((method) => {
   defaults.headers[method] = {}
 })
 

@@ -18,7 +18,7 @@ function normalizeHeaderName(headers: any, normalizedHeaderName: string): void {
   if (!headers) {
     return
   }
-  Object.keys(headers).forEach(headerName => {
+  Object.keys(headers).forEach((headerName) => {
     if (
       headerName.toUpperCase() === normalizedHeaderName.toUpperCase() &&
       headerName !== normalizedHeaderName
@@ -30,7 +30,8 @@ function normalizeHeaderName(headers: any, normalizedHeaderName: string): void {
 }
 
 /**
- * @description: xhr 中数据为Json字符串的话,默认设置请求头的Content-Type为text/plain，
+ * @description: xhr 中的data数据不接受对象形式，需要转为Json字符串
+ * 而Json字符串会被当做普通文本处理，xhr默认设置的请求头为Content-Type为text/plain，
  * 这里需要将其修改成application/json
  * @param {any} headers
  * @param {any} data
@@ -58,15 +59,13 @@ function parseHeaders(headers: string): any {
   if (!headers) {
     return parsedHeaders
   }
-  headers.split('\r\n').forEach(line => {
-    let [key, value] = line.split(':')
+  headers.split('\r\n').forEach((line) => {
+    let [key, ...valuesArr] = line.split(':')
     if (!key) {
       return
     }
     key = key.trim().toLocaleLowerCase()
-    if (value) {
-      value.trim()
-    }
+    const value = valuesArr.join(':').trim()
     parsedHeaders[key] = value
   })
   return parsedHeaders
@@ -86,9 +85,9 @@ function flattenHeaders(headers: any, method: Method): any {
     'options',
     'post',
     'put',
-    'patch'
+    'patch',
   ]
-  keysToDelete.forEach(key => {
+  keysToDelete.forEach((key) => {
     delete headers[key]
   })
   return deepCopy(methodMergedHeaders, headers)

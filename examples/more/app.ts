@@ -140,35 +140,35 @@ import NProgress from 'nprogress'
 //   })
 
 // 测试自定义参数序列化
-// const params = new URLSearchParams()
-// params.set('k', '关键字') // 设置参数
-// params.set('v', 'value')
-// axios
-//   .get('/more/get', {
-//     params
-//   })
-//   .then(res => {
-//     console.log(res)
-//   })
+const params = new URLSearchParams()
+params.set('k', '关键字') // 设置参数
+params.set('v', 'value')
+axios
+  .get('/more/get', {
+    params,
+  })
+  .then((res) => {
+    console.log(res)
+  })
 
-// axios
-//   .get('/more/get', {
-//     params: {
-//       a: 1,
-//       b: 2,
-//       c: ['a', 'b', 'c']
-//     }
-//   })
-//   .then(res => {
-//     console.log(res)
-//   })
+axios
+  .get('/more/get', {
+    params: {
+      a: 1,
+      b: 2,
+      c: ['a', 'b', 'c'],
+    },
+  })
+  .then((res) => {
+    console.log(res)
+  })
 
-// const instance = axios.create({
-//   paramsSerializer(params) {
-//     // qs.stringify底层直接调用的encodeURIComponent
-//     return qs.stringify(params, { arrayFormat: 'brackets' })
-//   }
-// })
+const instance = axios.create({
+  paramsSerializer(params) {
+    // qs.stringify底层直接调用的encodeURIComponent
+    return qs.stringify(params, { arrayFormat: 'brackets' })
+  },
+})
 
 // instance
 //   .get('/more/get', {
@@ -194,34 +194,34 @@ import NProgress from 'nprogress'
 
 // 测试axios.all和axios.spread
 
-function getA() {
-  return axios.get('/more/A')
-}
+// function getA() {
+//   return axios.get('/more/A')
+// }
 
-function getB() {
-  return axios.get('/more/B')
-}
+// function getB() {
+//   return axios.get('/more/B')
+// }
 
-axios.all([getA(), getB()]).then(
-  axios.spread(function(resA, resB) {
-    console.log(resA.data)
-    console.log(resB.data)
-  })
-)
+// axios.all([getA(), getB()]).then(
+//   axios.spread(function (resA, resB) {
+//     console.log(resA.data)
+//     console.log(resB.data)
+//   })
+// )
 
-axios.all([getA(), getB()]).then(([resA, resB]) => {
-  console.log(resA.data)
-  console.log(resB.data)
-})
+// axios.all([getA(), getB()]).then(([resA, resB]) => {
+//   console.log(resA.data)
+//   console.log(resB.data)
+// })
 
-// 测试axios.getUri
-const fakeConfig = {
-  baseURL: 'https://www.baidu.com/',
-  url: '/user/12345',
-  params: {
-    idClient: 1,
-    idTest: 2,
-    testString: 'thisIsATest'
-  }
-}
-console.log(axios.getUri(fakeConfig))
+// // 测试axios.getUri
+// const fakeConfig = {
+//   baseURL: 'https://www.baidu.com/',
+//   url: '/user/12345',
+//   params: {
+//     idClient: 1,
+//     idTest: 2,
+//     testString: 'thisIsATest',
+//   },
+// }
+// console.log(axios.getUri(fakeConfig))

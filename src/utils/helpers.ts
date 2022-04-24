@@ -45,15 +45,15 @@ function extend<T, U>(to: T, from: U): T & U {
 }
 
 /**
- * @description: 深拷贝
+ * @description: 深拷贝,支持将多个对象的属性拷贝到一个对象中
  * @param {array} objs
  * @return {*}
  */
 function deepCopy(...objs: any[]): any {
   const result = Object.create(null)
-  objs.forEach(obj => {
+  objs.forEach((obj) => {
     if (obj) {
-      Object.keys(obj).forEach(key => {
+      Object.keys(obj).forEach((key) => {
         const val = obj[key]
         if (isPlainObject(val)) {
           if (isPlainObject(result[key])) {

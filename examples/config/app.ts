@@ -1,5 +1,5 @@
-import axios, { TransformFn } from '../../src/index'
-// import axios from 'axios'
+// import axios, { TransformFn } from '../../src/index'
+import axios from 'axios'
 // , { AxiosTransformer }
 import qs from 'qs'
 
@@ -21,11 +21,38 @@ import qs from 'qs'
 // })
 
 // 请求和响应数据配置化功能测试
-// axios({
+axios({
+  transformRequest: [
+    function (data) {
+      data.a = 2
+      return data
+      // return data
+      // return qs.stringify(data)
+    },
+    // ...(axios.defaults.transformRequest as Transformer[]),
+  ],
+  // transformResponse: [
+  //   ...(axios.defaults.transformResponse as TransformFn[]),
+  //   function (data) {
+  //     if (typeof data === 'object') {
+  //       data.b = 2
+  //     }
+  //     return data
+  //   },
+  // ],
+  url: '/config/post',
+  method: 'post',
+  data: {
+    a: 1,
+  },
+}).then((res) => {
+  console.log(res.data)
+})
+
+// const instance = axios.create({
 //   transformRequest: [
 //     function(data) {
-//       return data
-//       // return qs.stringify(data)
+//       return qs.stringify(data)
 //     },
 //     ...(axios.defaults.transformRequest as TransformFn[])
 //   ],
@@ -37,7 +64,10 @@ import qs from 'qs'
 //       }
 //       return data
 //     }
-//   ],
+//   ]
+// })
+
+// instance({
 //   url: '/config/post',
 //   method: 'post',
 //   data: {
@@ -46,31 +76,3 @@ import qs from 'qs'
 // }).then(res => {
 //   console.log(res.data)
 // })
-
-const instance = axios.create({
-  transformRequest: [
-    function(data) {
-      return qs.stringify(data)
-    },
-    ...(axios.defaults.transformRequest as TransformFn[])
-  ],
-  transformResponse: [
-    ...(axios.defaults.transformResponse as TransformFn[]),
-    function(data) {
-      if (typeof data === 'object') {
-        data.b = 2
-      }
-      return data
-    }
-  ]
-})
-
-instance({
-  url: '/config/post',
-  method: 'post',
-  data: {
-    a: 1
-  }
-}).then(res => {
-  console.log(res.data)
-})

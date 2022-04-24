@@ -5,7 +5,7 @@
  */
 import { AxiosRequestConfig, AxiosResponse } from '../types'
 class AxiosError extends Error {
-  hasError: boolean
+  isAxiosError: boolean
   config: AxiosRequestConfig
   code?: string | null
   request?: any
@@ -18,7 +18,7 @@ class AxiosError extends Error {
     response?: AxiosResponse
   ) {
     super(message)
-    this.hasError = true
+    this.isAxiosError = true
     this.config = config
     this.code = code
     this.request = request
