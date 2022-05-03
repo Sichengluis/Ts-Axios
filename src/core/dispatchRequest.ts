@@ -3,7 +3,7 @@
  * @Date: 2022-04-03 16:23:38
  * @Description:
  */
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse, AxiosError } from '../types'
 import { getUrlWithParams, isAbsoluteURL, combineURL } from '../utils/url'
 import { flattenHeaders } from '../utils/headers'
 import xhr from './xhr'
@@ -18,9 +18,17 @@ export default function dispatchRequest(config: AxiosRequestConfig): AxiosPromis
   throwIfCanceled(config)
   processRequestConfig(config)
   // 返回带有xhr请求结果的Promise对象
-  return xhr(config).then((resp) => {
-    return transformResponseData(resp)
-  })
+  return xhr(config).then(
+    (resp: AxiosResponse) => {
+      return transformResponseData(resp)
+    },
+    (e: AxiosError) => {
+      if (e && e.response) {
+        e.response = transformResponseData(e.response)
+      }
+      return Promise.reject(e)
+    }
+  )
 }
 function processRequestConfig(config: AxiosRequestConfig): void {
   config.url = transformUrl(config)

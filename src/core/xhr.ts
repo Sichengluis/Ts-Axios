@@ -25,7 +25,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       validateStatus,
       method = 'get',
       headers = {},
-      data = null
+      data = null,
     } = config
     const xhr = new XMLHttpRequest()
 
@@ -63,7 +63,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       }
 
       // 给xhr设置请求头
-      Object.keys(headers).forEach(headerName => {
+      Object.keys(headers).forEach((headerName) => {
         if (headerName.toLowerCase() === 'content-type' && data === null) {
           delete headers[headerName]
           return
@@ -79,7 +79,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
      */
     function processCancel(): void {
       if (cancelToken) {
-        cancelToken.promise.then(reason => {
+        cancelToken.promise.then((reason) => {
           xhr.abort()
           reject(reason)
         })
@@ -123,7 +123,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         xhr.upload.onprogress = onUploadProgress
       }
 
-      xhr.onreadystatechange = function() {
+      xhr.onreadystatechange = function () {
         if (xhr.status === 0) {
           return
         }
@@ -132,14 +132,15 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         }
         // 成功获取响应
         const responseHeaders = parseHeaders(xhr.getAllResponseHeaders())
-        const responseData = xhr.response
+        const responseData =
+          responseType && responseType !== 'text' ? xhr.response : xhr.responseText
         const response: AxiosResponse = {
           data: responseData,
           status: xhr.status,
           statusText: xhr.statusText,
           headers: responseHeaders,
           config,
-          request: xhr
+          request: xhr,
         }
         handleResponseStatus(response)
       }
@@ -165,7 +166,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         resolve(resp)
       } else {
         reject(
-          createError(`Request failed with stauts code ${resp.status}`, config, null, xhr, resp)
+          createError(`Request failed with status code ${resp.status}`, config, null, xhr, resp)
         )
       }
     }
