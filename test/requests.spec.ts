@@ -3,6 +3,7 @@
  * @Date: 2022-04-28 14:28:31
  * @Description:
  */
+import { doesNotMatch } from 'assert'
 import axios from '../src/index'
 // import axios from 'axios'
 import { AxiosResponse, AxiosError } from '../src/index'
@@ -17,14 +18,10 @@ describe('request', () => {
   })
   // 只传入一个string应该被当作url
   test('should treat single string param as request url', () => {
-    axios('/foo').then((resp) => {
-      expect(resp.config.url).toBe('/foo')
-      expect(resp.config.method).toBe('get')
-    })
+    axios('/foo')
     return getAjaxRequest().then((req) => {
-      req.respondWith({
-        status: 200,
-      })
+      expect(req.url).toBe('/foo')
+      expect(req.method).toBe('get')
     })
   })
   // 传入的method应该被转为小写
@@ -32,13 +29,9 @@ describe('request', () => {
     axios({
       url: '/foo',
       method: 'POST',
-    }).then((response) => {
-      expect(response.config.method).toBe('post')
     })
     return getAjaxRequest().then((request) => {
-      request.respondWith({
-        status: 200,
-      })
+      expect(request.method).toBe('post')
     })
   })
   // 网络异常
@@ -62,7 +55,7 @@ describe('request', () => {
     }
   })
   // 超时异常
-  test('should rejecet when request timeout', () => {
+  test('should rejecet when request timeout', (done) => {
     const resolveSpy = jest.fn((resp: AxiosResponse) => {
       return resp
     })
@@ -75,14 +68,15 @@ describe('request', () => {
       expect(rejectSpy).toHaveBeenCalled()
       expect(res instanceof Error).toBeTruthy()
       expect((res as AxiosError).message).toBe('Timeout of 2000 ms exceeded')
+      done()
     }
-    return getAjaxRequest().then((req) => {
+    getAjaxRequest().then((req) => {
       // @ts-ignore
       req.eventBus.trigger('timeout')
     })
   })
   // validateStatus返回false时
-  test('should reject when validateStatus returns false', () => {
+  test('should reject when validateStatus returns false', (done) => {
     const resolveSpy = jest.fn((resp: AxiosResponse) => {
       return resp
     })
@@ -102,15 +96,16 @@ describe('request', () => {
       expect(rejectSpy).toHaveBeenCalled()
       expect((res as AxiosError).message).toBe('Request failed with status code 500')
       expect((res as AxiosError).response!.status).toBe(500)
+      done()
     }
-    return getAjaxRequest().then((req) => {
+    getAjaxRequest().then((req) => {
       req.respondWith({
         status: 500,
       })
     })
   })
   // validateStatus返回true时
-  test('should reject when validateStatus returns true', () => {
+  test('should reject when validateStatus returns true', (done) => {
     const resolveSpy = jest.fn((resp: AxiosResponse) => {
       return resp
     })
@@ -130,15 +125,16 @@ describe('request', () => {
       expect(rejectSpy).not.toHaveBeenCalled()
       expect((res as AxiosResponse).config.url).toBe('/foo')
       expect((res as AxiosResponse).config.method).toBe('get')
+      done()
     }
-    return getAjaxRequest().then((req) => {
+    getAjaxRequest().then((req) => {
       req.respondWith({
         status: 200,
       })
     })
   })
   // 请求成功时将响应数据转成json
-  test('should return JSON when resolved', () => {
+  test('should return JSON when resolved', (done) => {
     axios('/api/account/signup', {
       auth: {
         username: '',
@@ -151,8 +147,9 @@ describe('request', () => {
     }).then((resp) => {
       const data = resp.data
       expect(data).toEqual({ errno: 0 })
+      done()
     })
-    return getAjaxRequest().then((request) => {
+    getAjaxRequest().then((request) => {
       request.respondWith({
         status: 200,
         statusText: 'OK',
@@ -161,7 +158,7 @@ describe('request', () => {
     })
   })
   // 请求失败时将响应数据转成json
-  test('should return JSON when rejected', () => {
+  test('should return JSON when rejected', (done) => {
     axios('/api/account/signup', {
       auth: {
         username: '',
@@ -174,8 +171,9 @@ describe('request', () => {
     }).catch((e: AxiosError) => {
       const data = e.response!.data
       expect(data).toEqual({ error: 'BAD USERNAME', code: 1 })
+      done()
     })
-    return getAjaxRequest().then((request) => {
+    getAjaxRequest().then((request) => {
       request.respondWith({
         status: 400,
         statusText: 'Bad Request',
@@ -184,7 +182,7 @@ describe('request', () => {
     })
   })
   // 接收到所有响应信息
-  test('should receive complete response information', () => {
+  test('should receive complete response information', (done) => {
     axios('/foo', {
       method: 'post',
     }).then((resp) => {
@@ -193,8 +191,9 @@ describe('request', () => {
       expect(resp.statusText).toBe('OK')
       expect(resp.headers).toEqual({ 'content-type': 'application/json' })
       expect(data).toEqual({ foo: 'bar' })
+      done()
     })
-    return getAjaxRequest().then((request) => {
+    getAjaxRequest().then((request) => {
       request.respondWith({
         status: 200,
         statusText: 'OK',
@@ -206,7 +205,7 @@ describe('request', () => {
     })
   })
   // 传入的Content-Type会被Normalize，可以传入任意形式的Content-Type,比如content-type,Content-type
-  test('should transform method string to losercase', () => {
+  test('should transform method string to losercase', (done) => {
     axios({
       url: '/foo',
       method: 'POST',
@@ -217,15 +216,16 @@ describe('request', () => {
     }).then((response) => {
       const requestHeaders = response.config!.headers!
       expect(requestHeaders['Content-Type']).toBe('application/json')
+      done()
     })
-    return getAjaxRequest().then((request) => {
+    getAjaxRequest().then((request) => {
       request.respondWith({
         status: 200,
       })
     })
   })
   // 能够使用ArrayBuffer作为响应
-  test('should support array buffer response', () => {
+  test('should support array buffer response', (done) => {
     function str2ab(str: string) {
       const buff = new ArrayBuffer(str.length)
       const view = new Uint8Array(buff)
@@ -239,6 +239,7 @@ describe('request', () => {
     }).then((response: AxiosResponse) => {
       expect(response.data instanceof ArrayBuffer)
       expect(response.data.byteLength).toBe(11)
+      done()
     })
     getAjaxRequest().then((request) => {
       request.respondWith({

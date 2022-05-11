@@ -45,11 +45,14 @@ function getUrlWithParams(
     return url
   }
   let serializedParams
+  // 如果用户自定义了参数序列化方式，使用用户自定义的
   if (paramsSerializer) {
     serializedParams = paramsSerializer(params)
   } else if (isURLSearchParams(params)) {
+    // 用户传入的params是URLSearchParams类型，直接转为字符串
     serializedParams = params.toString()
   } else {
+    // 根据用户配置的params对象，生成序列化后的参数字符串
     const parafragments: string[] = []
     // params实际上是一个对象
     Object.keys(params).forEach((key) => {
@@ -83,7 +86,7 @@ function getUrlWithParams(
   if (index !== -1) {
     url = url.slice(0, index)
   }
-  // 将url和查询字符串拼接
+  // 将url和序列化后的参数字符串拼接
   if (serializedParams.length) {
     url = url + (url.indexOf('?') === -1 ? '?' : '&') + serializedParams
   }

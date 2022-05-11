@@ -149,6 +149,7 @@ interface AxiosInterceptorManager<T> {
 }
 
 interface ResolvedFn<T> {
+  // 接收一个T类型的值作为参数，直接返回T或者resolve/reject了T的Promise
   (val: T): T | Promise<T>
 }
 

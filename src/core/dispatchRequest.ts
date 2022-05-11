@@ -36,7 +36,7 @@ function processRequestConfig(config: AxiosRequestConfig): void {
   config.headers = flattenHeaders(config.headers, config.method!)
 }
 /**
- * @description: 得到完整的请求url
+ * @description: 根据用户配置的baseURL，url，params和paramsSerializer得到完整的请求url
  * @param {AxiosRequestConfig} config
  * @return {*}
  */
