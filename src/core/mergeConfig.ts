@@ -41,25 +41,20 @@ function deepMergeStrategy(defaultVal: any, userVal: any): any {
   if (isPlainObject(userVal)) {
     // 用户设置的值为对象,和默认配置对象合并
     return deepCopy(defaultVal, userVal)
-  } else if (typeof userVal !== 'undefined') {
-    // 用户设置的值为null
-    return userVal
   }
-  // 用户没有设置值,使用默认配置
-  else if (isPlainObject(defaultVal)) {
+  // 用户没有设置合法值,使用默认配置（auth和headers不可能设置值类型的数据）
+  else {
     return deepCopy(defaultVal)
-  } else {
-    return defaultVal
   }
 }
 
 const fromUserStrategyKeys = ['url', 'params', 'data']
-fromUserStrategyKeys.forEach(key => {
+fromUserStrategyKeys.forEach((key) => {
   strategiesMap[key] = fromUserStrategy
 })
 
 const deepMergeStrategyKeys = ['headers', 'auth']
-deepMergeStrategyKeys.forEach(key => {
+deepMergeStrategyKeys.forEach((key) => {
   strategiesMap[key] = deepMergeStrategy
 })
 
