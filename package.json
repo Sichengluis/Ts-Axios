@@ -1,6 +1,6 @@
 {
   "name": "axios-with-ts",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Refactoring axios with typescript",
   "keywords": [
     "axios",
