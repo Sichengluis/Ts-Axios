@@ -1,8 +1,14 @@
 {
   "name": "axios-with-ts",
   "version": "0.1.1",
-  "description": "",
-  "keywords": [],
+  "description": "Refactoring axios with typescript",
+  "keywords": [
+    "axios",
+    "request",
+    "fetch",
+    "ts",
+    "typescript"
+  ],
   "main": "dist/ts-axios.umd.js",
   "module": "dist/ts-axios.es5.js",
   "typings": "dist/types/ts-axios.d.ts",
@@ -12,7 +18,7 @@
   "author": "Sichengluis <sichengluis@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/Sichengluis/Ts-Axios"
   },
   "license": "MIT",
   "engines": {
