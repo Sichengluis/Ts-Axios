@@ -109,9 +109,9 @@ axios({
   url: '/base/post',
   data: {
     a: 1,
-    b: 2
-  }
-}).then(res => {
+    b: 2,
+  },
+}).then((res) => {
   console.log(res)
 })
 
@@ -121,8 +121,8 @@ axios({
   responseType: 'json',
   data: {
     a: 3,
-    b: 4
-  }
-}).then(res => {
+    b: 4,
+  },
+}).then((res) => {
   console.log(res)
 })
